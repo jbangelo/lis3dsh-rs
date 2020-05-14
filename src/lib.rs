@@ -75,11 +75,11 @@ where
         DELAY: hal::blocking::delay::DelayMs<u8>,
     {
         // Reset it
-        self.iface.write_u8_reg(CTRL_REG3_ADDR, 0x01)?;
+        self.iface.write_reg(CTRL_REG3_ADDR, 0x01)?;
         delay.delay_ms(5);
         // Enable the XYZ channels
-        self.iface.write_u8_reg(CTRL_REG4_ADDR, 0x67)?;
-        self.iface.write_u8_reg(CTRL_REG3_ADDR, 0xE8)
+        self.iface.write_reg(CTRL_REG4_ADDR, 0x67)?;
+        self.iface.write_reg(CTRL_REG3_ADDR, 0xE8)
     }
 
     pub fn read_data(&mut self) -> Result<[i16; 3], IFACE::Error> {

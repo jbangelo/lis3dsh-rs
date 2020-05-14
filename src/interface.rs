@@ -5,7 +5,7 @@ pub trait Interface {
 
     fn read_reg(&mut self, addr: u8) -> Result<u8, Self::Error>;
 
-    fn write_u8_reg(&mut self, addr: u8, value: u8) -> Result<(), Self::Error>;
+    fn write_reg(&mut self, addr: u8, value: u8) -> Result<(), Self::Error>;
 }
 
 pub use spi::SpiInterface as Spi;
@@ -84,7 +84,7 @@ mod spi {
             Ok(reads[1])
         }
 
-        fn write_u8_reg(&mut self, addr: u8, value: u8) -> Result<(), Self::Error> {
+        fn write_reg(&mut self, addr: u8, value: u8) -> Result<(), Self::Error> {
             let _cs = ChipSelectGuard::new(&mut self.cs);
             let mut words = [addr & ADDR_MASK, value];
             let _ = self.spi.transfer(&mut words)?;
