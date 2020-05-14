@@ -6,7 +6,6 @@ extern crate embedded_hal;
 
 use embedded_hal as hal;
 
-
 pub struct Status(u8);
 
 impl Status {
@@ -60,14 +59,20 @@ const OUT_X_LOW_ADDR: u8 = 0x28;
 const OUT_X_ADDR: u8 = OUT_X_LOW_ADDR;
 
 pub struct Lis3dsh<IFACE>
-    where IFACE: interface::Interface {
+where
+    IFACE: interface::Interface,
+{
     iface: IFACE,
 }
 
 impl<IFACE> Lis3dsh<IFACE>
-    where IFACE: interface::Interface {
+where
+    IFACE: interface::Interface,
+{
     fn init<DELAY>(&mut self, delay: &mut DELAY) -> Result<(), IFACE::Error>
-        where DELAY: hal::blocking::delay::DelayMs<u8> {
+    where
+        DELAY: hal::blocking::delay::DelayMs<u8>,
+    {
         // Reset it
         self.iface.write_u8_reg(CTRL_REG3_ADDR, 0x01)?;
         delay.delay_ms(5);
@@ -77,7 +82,7 @@ impl<IFACE> Lis3dsh<IFACE>
     }
 
     pub fn read_data(&mut self) -> Result<[i16; 3], IFACE::Error> {
-        let mut data= [0;6];
+        let mut data = [0; 6];
         let _ = self.iface.read_multiple_regs(OUT_X_ADDR, &mut data)?;
         let x_value = (data[0] as i16) | ((data[1] as i16) << 8);
         let y_value = (data[2] as i16) | ((data[3] as i16) << 8);
@@ -100,16 +105,22 @@ impl<IFACE> Lis3dsh<IFACE>
 }
 
 impl<SPI, CSPIN> Lis3dsh<interface::Spi<SPI, CSPIN>>
-    where SPI: hal::blocking::spi::Transfer<u8> + hal::blocking::spi::Write<u8>,
-          CSPIN: hal::digital::v2::OutputPin {
-    pub fn new_spi<DELAY>(spi: SPI, mut cs: CSPIN, delay: &mut DELAY) -> Result<Self, interface::Spi<SPI, CSPIN>::Error>
-        where DELAY: hal::blocking::delay::DelayMs<u8> {
+where
+    SPI: hal::blocking::spi::Transfer<u8>,
+    CSPIN: hal::digital::v2::OutputPin,
+{
+    pub fn new_spi<DELAY>(
+        spi: SPI,
+        mut cs: CSPIN,
+        delay: &mut DELAY,
+    ) -> Result<Self, SPI::Error>
+    where
+        DELAY: hal::blocking::delay::DelayMs<u8>,
+    {
         // Make sure the chip select is in the inactive state
         let _ = cs.set_high();
         let iface = interface::Spi::new(spi, cs);
-        let mut accel = Self {
-            iface
-        };
+        let mut accel = Self { iface };
         accel.init(delay)?;
         Ok(accel)
     }
