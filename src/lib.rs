@@ -51,6 +51,7 @@ impl Status {
     }
 }
 
+const OUT_T_ADDR: u8 = 0x0c;
 const WHO_AM_I_ADDR: u8 = 0x0f;
 const CTRL_REG4_ADDR: u8 = 0x20;
 const CTRL_REG3_ADDR: u8 = 0x23;
@@ -83,11 +84,16 @@ where
 
     pub fn read_data(&mut self) -> Result<[i16; 3], IFACE::Error> {
         let mut data = [0; 6];
-        let _ = self.iface.read_multiple_regs(OUT_X_ADDR, &mut data)?;
+        self.iface.read_multiple_regs(OUT_X_ADDR, &mut data)?;
         let x_value = (data[0] as i16) | ((data[1] as i16) << 8);
         let y_value = (data[2] as i16) | ((data[3] as i16) << 8);
         let z_value = (data[4] as i16) | ((data[5] as i16) << 8);
         Ok([x_value, y_value, z_value])
+    }
+
+    pub fn read_temp_data(&mut self) -> Result<i8, IFACE::Error> {
+        let temp_data = self.iface.read_reg(OUT_T_ADDR)?;
+        Ok(temp_data as i8)
     }
 
     pub fn is_data_ready(&mut self) -> Result<bool, IFACE::Error> {
