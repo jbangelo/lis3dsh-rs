@@ -70,7 +70,7 @@ impl<IFACE> Lis3dsh<IFACE>
 where
     IFACE: interface::Interface,
 {
-    fn init<DELAY>(&mut self, delay: &mut DELAY) -> Result<(), IFACE::Error>
+    pub fn init<DELAY>(&mut self, delay: &mut DELAY) -> Result<(), IFACE::Error>
     where
         DELAY: hal::blocking::delay::DelayMs<u8>,
     {
@@ -115,20 +115,11 @@ where
     SPI: hal::blocking::spi::Transfer<u8>,
     CSPIN: hal::digital::v2::OutputPin,
 {
-    pub fn new_spi<DELAY>(
-        spi: SPI,
-        mut cs: CSPIN,
-        delay: &mut DELAY,
-    ) -> Result<Self, SPI::Error>
-    where
-        DELAY: hal::blocking::delay::DelayMs<u8>,
-    {
+    pub fn new_spi(spi: SPI, mut cs: CSPIN) -> Self {
         // Make sure the chip select is in the inactive state
         let _ = cs.set_high();
         let iface = interface::Spi::new(spi, cs);
-        let mut accel = Self { iface };
-        accel.init(delay)?;
-        Ok(accel)
+        Self { iface }
     }
 }
 
