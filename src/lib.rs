@@ -121,6 +121,10 @@ where
         let iface = interface::Spi::new(spi, cs);
         Self { iface }
     }
+
+    pub fn into_inner(self) -> (SPI, CSPIN) {
+        self.iface.into_inner()
+    }
 }
 
 #[cfg(test)]

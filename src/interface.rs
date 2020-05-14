@@ -60,6 +60,10 @@ mod spi {
         pub fn new(spi: SPI, cs: CSPIN) -> Self {
             Self { spi, cs }
         }
+
+        pub fn into_inner(self) -> (SPI, CSPIN) {
+            (self.spi, self.cs)
+        }
     }
 
     impl<SPI, CSPIN> super::Interface for SpiInterface<SPI, CSPIN>
