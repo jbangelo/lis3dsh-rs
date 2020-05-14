@@ -1,3 +1,5 @@
+#![no_std]
+
 pub mod interface;
 
 extern crate embedded_hal;
