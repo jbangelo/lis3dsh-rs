@@ -59,6 +59,8 @@ const STATUS_ADDR: u8 = 0x27;
 const OUT_X_LOW_ADDR: u8 = 0x28;
 const OUT_X_ADDR: u8 = OUT_X_LOW_ADDR;
 
+pub const EXPECTED_WHO_AM_I: u8 = 0x3f;
+
 pub struct Lis3dsh<IFACE>
 where
     IFACE: interface::Interface,
