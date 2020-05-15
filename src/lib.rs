@@ -1,7 +1,7 @@
 //! A driver for the LIS3DSH accelerometer
 //!
 //! This crate provides implementations using either the SPI and I2C interface,
-//! with a simplified interface abstrcting away the serial port being used. 
+//! with a simplified interface abstrcting away the serial port being used.
 //! The `embedded_hal` crate is used to define the interface to both serial
 //! buses.
 
@@ -181,7 +181,7 @@ where
         Self { iface }
     }
 
-    /// Converts the `Lis3dsh` into the constituant SPI interface and 
+    /// Converts the `Lis3dsh` into the constituant SPI interface and
     /// chip select pin
     pub fn into_inner(self) -> (SPI, CSPIN) {
         self.iface.into_inner()

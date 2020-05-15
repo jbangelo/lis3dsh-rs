@@ -1,6 +1,6 @@
 //! Interfaces to communicate with the LIS3DSH
 
-/// Interface needed to read and write registers 
+/// Interface needed to read and write registers
 pub trait Interface {
     type Error;
 
