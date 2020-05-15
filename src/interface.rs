@@ -1,10 +1,16 @@
+//! Interfaces to communicate with the LIS3DSH
+
+/// Interface needed to read and write registers 
 pub trait Interface {
     type Error;
 
+    /// Should read from multiple registers, starting at address `addr`
     fn read_multiple_regs(&mut self, addr: u8, data: &mut [u8]) -> Result<(), Self::Error>;
 
+    /// Should read the constents of a single register at address `addr`
     fn read_reg(&mut self, addr: u8) -> Result<u8, Self::Error>;
 
+    /// Should write the `value` into the register at address `addr`
     fn write_reg(&mut self, addr: u8, value: u8) -> Result<(), Self::Error>;
 }
 
@@ -17,6 +23,10 @@ mod spi {
     const READ_FLAG: u8 = 0x80;
     const ADDR_MASK: u8 = 0x7F;
 
+    /// RAII wrapper for enabling and disabling the chip select pin
+    ///
+    /// Upon creating the CS pin is set to active, upon being dropped the
+    /// CS pin is set to inactive
     struct ChipSelectGuard<'a, CSPIN>
     where
         CSPIN: OutputPin,
@@ -43,6 +53,7 @@ mod spi {
         }
     }
 
+    /// SPI interface for interacting  with a LIS3DSH
     pub struct SpiInterface<SPI, CSPIN>
     where
         SPI: Transfer<u8>,
