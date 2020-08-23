@@ -229,15 +229,18 @@ where
     IFACE: interface::Interface<Error = E>,
 {
     /// Initializes the accelerometer with these steps:
-    ///     1. Read Device ID
-    ///     2. Soft reset
-    ///     3. Block for 5ms
-    ///     4. Enable X, Y, & Z channels at 100Hz, 2G, BDU
-    ///     5. Enable the DRDY signal on int1, enable int1, interrupt signal pulsed, interrupt active high
+    ///     1. Block for 5ms to settle
+    ///     2. Read Device ID
+    ///     3. Soft reset
+    ///     4. Block for 5ms
+    ///     5. Enable X, Y, & Z channels at 100Hz, 2G, BDU
+    ///     6. Enable the DRDY signal on int1, enable int1, interrupt signal pulsed, interrupt active high
     pub fn init<DELAY>(&mut self, delay: &mut DELAY) -> Result<(), Error<E>>
     where
         DELAY: hal::blocking::delay::DelayMs<u8>,
     {
+        delay.delay_ms(5);
+
         if self.who_am_i()? != EXPECTED_WHO_AM_I {
             return Err(Error::WrongAddress);
         }
